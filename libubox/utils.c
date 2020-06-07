@@ -24,23 +24,19 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
-
 #include <fcntl.h>
 #include <pthread.h>
 #include "hash.h"
-
+#include <dirent.h>
+#include <fcntl.h>
 
 #define C_PTR_ALIGN	(sizeof(size_t))
 #define C_PTR_MASK	(-C_PTR_ALIGN)
-
-
 
 #ifdef LIBUBOX_COMPAT_CLOCK_GETTIME
 #include <mach/mach_host.h>		/* host_get_clock_service() */
@@ -183,27 +179,27 @@ int isport(const char *port)
 
 	
 	if (port == NULL) {
-		return -1;
+		return 0;
 	}
 
 	len = strlen(port);
 	
 	if (port[0] != '+' && (port[0] < '0' || port[0] > '9')) {
-		return -1;
+		return 0;
 	}
 	for (i = 1; i < len; i++) {
 		if (port[i] < 0 || port[i] > '9') {
-			return -1;
+			return 0;
 		}
 	}
 
 	port_num = atoi(port);
 
 	if (port_num <=0 || port_num >65535) {
-		return -1;
+		return 0;
 	}
 	
-	return 0;
+	return 1;
 }
 
 
@@ -274,4 +270,36 @@ char * uinttoipv4(unsigned int ip)
 	return paddr;
 }
 
+
+int strlcpy(char *src, const char *dest, unsigned int size)
+{
+
+	unsigned int size_copy = 0;
+
+	if (!src || !dest || !size)
+		return 0;
+
+	size_copy = size > strlen(dest)?strlen(dest):size-1;
+	memcpy(src, dest, size_copy);
+	src[size_copy] = 0;
+
+	return size_copy;
+}
+
+int is_dir_exist(char *dir, int create)
+{
+	DIR *_dir = NULL;
+	if (!(_dir = opendir(dir))) {
+		if (create) {
+			if (mkdir(dir, 0755) < 0) {
+				return 0;
+			}else 
+				return 1;
+		} else
+			return 0;
+	}
+
+	closedir(_dir);
+	return 1;
+}
 

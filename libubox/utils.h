@@ -263,6 +263,8 @@ unsigned int ipv4touint(const char *str_ip);
 
 char * uinttoipv4(unsigned int ip);
 
+int strlcpy(char *src, const char *dest, unsigned int size);
 
+int is_dir_exist(char *dir, int create);
 
 #endif
