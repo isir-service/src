@@ -274,23 +274,12 @@ int usock_wait_ready(int fd, int msecs) {
 	int res;
 
 	fds[0].fd = fd;
-	fds[0].events = POLLOUT;
+	fds[0].events = POLLIN;
 
 	res = poll(fds, 1, msecs);
-	if (res < 0) {
-		return errno;
-	} else if (res == 0) {
-		return -ETIMEDOUT;
-	} else {
-		int err = 0;
-		socklen_t optlen = sizeof(err);
+	/* <0 error 0 timeout > 1 normal */
+	if (res <= 0)
+		return 0;
 
-		res = getsockopt(fd, SOL_SOCKET, SO_ERROR, &err, &optlen);
-		if (res)
-			return errno;
-		if (err)
-			return err;
-	}
-
-	return 0;
+	return 1;
 }
