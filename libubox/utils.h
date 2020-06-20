@@ -267,4 +267,6 @@ int strlcpy(char *src, const char *dest, unsigned int size);
 
 int is_dir_exist(char *dir, int create);
 
+void signal_segvdump(void);
+
 #endif

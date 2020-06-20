@@ -34,6 +34,9 @@
 #include "hash.h"
 #include <dirent.h>
 #include <fcntl.h>
+#include <execinfo.h>
+
+#define BACKTRACE_SIZE   20
 
 #define C_PTR_ALIGN	(sizeof(size_t))
 #define C_PTR_MASK	(-C_PTR_ALIGN)
@@ -301,5 +304,37 @@ int is_dir_exist(char *dir, int create)
 
 	closedir(_dir);
 	return 1;
+}
+
+
+static void dump_trace(int signo)
+{
+	(void)signo;
+	int j, nptrs;
+	void *buffer[BACKTRACE_SIZE];
+	char **strings;
+	
+	nptrs = backtrace(buffer, BACKTRACE_SIZE);
+	
+	printf("backtrace() returned %d addresses\n", nptrs);
+ 
+	strings = backtrace_symbols(buffer, nptrs);
+	if (strings == NULL) {
+		perror("backtrace_symbols");
+		return;
+	}
+
+	for (j = 0; j < nptrs; j++)
+		printf("  [%02d] %s\n", j, strings[j]);
+
+	free(strings);
+	return;
+
+}
+
+void signal_segvdump(void)
+{
+	signal(SIGSEGV, dump_trace);
+	return;
 }
 
