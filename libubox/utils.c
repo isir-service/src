@@ -316,7 +316,7 @@ static void dump_trace(int signo)
 	
 	nptrs = backtrace(buffer, BACKTRACE_SIZE);
 	
-	printf("backtrace() returned %d addresses\n", nptrs);
+	printf("------------------------SEGV!!!------------------------------\n");
  
 	strings = backtrace_symbols(buffer, nptrs);
 	if (strings == NULL) {
@@ -325,9 +325,10 @@ static void dump_trace(int signo)
 	}
 
 	for (j = 0; j < nptrs; j++)
-		printf("  [%02d] %s\n", j, strings[j]);
+		printf("[%02d] %s\n", j, strings[j]);
 
 	free(strings);
+	printf("------------------------END------------------------------\n");
 	return;
 
 }
