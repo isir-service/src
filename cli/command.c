@@ -1864,31 +1864,59 @@ static struct cmd_node enable_node =
 	NULL,
 };
 
-static struct cmd_node config_node =
+static struct cmd_node opbus_node =
 {
-  CONFIG_NODE,
-  "%s(config)# ",
-  1,
+  OPBUS_NODE,
+  "%s(opbus)# ",
+  0,
 	NULL,
 	NULL,
 };
 
-static struct cmd_node debug_node =
+static struct cmd_node opweb_node =
 {
-  DEBUG_NODE,
-  "%s(debug)# ",
+  OPWEB_NODE,
+  "%s(opweb)# ",
     0,
 	NULL,
 	NULL,
 };
-  static struct cmd_node show_node =
-  {
-	SHOW_NODE,
-	"%s(show)# ",
-	    0,
-	NULL,
-	NULL,
-  };
+
+static struct cmd_node oplog_node =
+{
+OPLOG_NODE,
+"%s(oplog)# ",
+    0,
+NULL,
+NULL,
+};
+
+static struct cmd_node opmgr_node =
+{
+  OPMGR_NODE,
+  "%s(opmgr)# ",
+	  0,
+  NULL,
+  NULL,
+};
+
+static struct cmd_node opcli_node =
+{
+  OPCLI_NODE,
+  "%s(opcli)# ",
+	  0,
+  NULL,
+  NULL,
+};
+
+static struct cmd_node other_node =
+{
+  OTHER_NODE,
+  "%s(other)# ",
+	  0,
+  NULL,
+  NULL,
+};
 
 
 DEFUN (enable_into_func,
@@ -1903,39 +1931,76 @@ DEFUN (enable_into_func,
    return CMD_SUCCESS;
 }
 
-DEFUN (config_into_func,
-		   config_into_cmd,
-		   "config",
-		"into config")
+DEFUN (opbus_func,
+		   opbus_cmd,
+		   "opbus",
+		"into opbus")
+	{
+		(void)argc;
+		(void)argv;
+		(void)self;
+		   vty->node = OPBUS_NODE;
+		   return CMD_SUCCESS;
+	}
+		
+DEFUN (opbweb_func,
+		   opweb_cmd,
+		   "opweb",
+		"into opweb")
 	{
 	(void)argc;
 	(void)argv;
 	(void)self;
-	   vty->node = CONFIG_NODE;
+	   vty->node = OPWEB_NODE;
 	   return CMD_SUCCESS;
 	}
-DEFUN (debug_into_func,
-       debug_into_cmd,
-       "debug",
-	"into debug")
-{
-			(void)self;
-			(void)argc;
-			(void)argv;
-   vty->node = DEBUG_NODE;
-   return CMD_SUCCESS;
-}
-DEFUN (show_into_func,
-       show_into_cmd,
-       "show",
-	"into show")
-{
-		(void)self;
+
+DEFUN (oplog_func,
+		   oplog_cmd,
+		   "oplog",
+		"into oplog")
+	{
 		(void)argc;
 		(void)argv;
-   vty->node = SHOW_NODE;
-   return CMD_SUCCESS;
-}
+		(void)self;
+		   vty->node = OPLOG_NODE;
+		   return CMD_SUCCESS;
+	}
+
+DEFUN (opcli_func,
+		   opcli_cmd,
+		   "opcli",
+		"into opcli")
+	{
+		(void)argc;
+		(void)argv;
+		(void)self;
+		   vty->node = OPCLI_NODE;
+		   return CMD_SUCCESS;
+	}
+DEFUN (opmgr_func,
+		   opmgr_cmd,
+		   "opmgr",
+		"into opmgr")
+	{
+		(void)argc;
+		(void)argv;
+		(void)self;
+		   vty->node = OPMGR_NODE;
+		   return CMD_SUCCESS;
+	}
+		
+DEFUN (other_func,
+		   other_cmd,
+		   "other",
+		"into other")
+	{
+		(void)argc;
+		(void)argv;
+		(void)self;
+		   vty->node = OTHER_NODE;
+		   return CMD_SUCCESS;
+	}
 
 
 DEFUN (exit_into_func,
@@ -1951,9 +2016,12 @@ DEFUN (exit_into_func,
 	case VIEW_NODE:
 	vty->status = VTY_CLOSE;
 	  break;
-	case CONFIG_NODE:
-	case DEBUG_NODE:
-	case SHOW_NODE:
+	case OPWEB_NODE:
+	case OPCLI_NODE:
+	case OPBUS_NODE:
+	case OPLOG_NODE:
+	case OPMGR_NODE:
+	case OTHER_NODE:
 	  vty->node = ENABLE_NODE;
 		break;
 	case ENABLE_NODE:
@@ -2007,6 +2075,7 @@ vty->node = VIEW_NODE;
 void
 cmd_init (void)
 {
+	int i = 0;
 
 	/* Allocate initial top vector of commands. */
 	cmdvec = vector_init (VECTOR_MIN_SIZE);
@@ -2022,37 +2091,27 @@ cmd_init (void)
 	install_node(&view_node, NULL);
 	install_node(&enable_node, NULL);
 	
-	install_node(&config_node, NULL);
-	install_node(&debug_node, NULL);
-	install_node(&show_node, NULL);
+	install_node(&opbus_node, NULL);
+	install_node(&opweb_node, NULL);
+	install_node(&oplog_node, NULL);
+	install_node(&opmgr_node, NULL);
+	install_node(&opcli_node, NULL);
+	install_node(&other_node, NULL);
 	
 	install_element(VIEW_NODE, &enable_into_cmd);
-	install_element(ENABLE_NODE, &config_into_cmd);
-	install_element(ENABLE_NODE, &debug_into_cmd);
-	install_element(ENABLE_NODE, &show_into_cmd);
+	install_element(ENABLE_NODE, &opbus_cmd);
+	install_element(ENABLE_NODE, &opweb_cmd);
+	install_element(ENABLE_NODE, &opcli_cmd);
+	install_element(ENABLE_NODE, &opmgr_cmd);
+	install_element(ENABLE_NODE, &oplog_cmd);
+	install_element(ENABLE_NODE, &other_cmd);
 
 
-
-	
-	install_element(VIEW_NODE, &exit_into_cmd);
-	install_element(ENABLE_NODE, &exit_into_cmd);
-	install_element(CONFIG_NODE, &exit_into_cmd);
-	install_element(DEBUG_NODE, &exit_into_cmd);
-	install_element(SHOW_NODE, &exit_into_cmd);
-
-
-	install_element(VIEW_NODE, &list_into_cmd);
-	install_element(ENABLE_NODE, &list_into_cmd);
-	install_element(CONFIG_NODE, &list_into_cmd);
-	install_element(DEBUG_NODE, &list_into_cmd);
-	install_element(SHOW_NODE, &list_into_cmd);
-
-
-	install_element(VIEW_NODE, &end_into_cmd);
-	install_element(ENABLE_NODE, &end_into_cmd);
-	install_element(CONFIG_NODE, &end_into_cmd);
-	install_element(DEBUG_NODE, &end_into_cmd);
-	install_element(SHOW_NODE, &end_into_cmd);
+	for(i = 0; i < VTY_NODE;i++) {
+		install_element(i, &exit_into_cmd);
+		install_element(i, &list_into_cmd);
+		install_element(i, &end_into_cmd);
+	}
 	
 	return;
 }

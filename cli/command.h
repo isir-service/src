@@ -71,9 +71,15 @@ enum node_type
 {
 	VIEW_NODE,
 	ENABLE_NODE,			/* Enable node. */
-	CONFIG_NODE,
-	DEBUG_NODE,
-	SHOW_NODE,
+	OPBUS_NODE,
+	OPWEB_NODE,
+	OPLOG_NODE,
+	OPMGR_NODE,
+	OPCLI_NODE,
+	/* other module mode */
+
+	/* default module node */
+	OTHER_NODE,
 	VTY_NODE			/* Vty node. */
 };
 
