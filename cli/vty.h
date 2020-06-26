@@ -27,105 +27,108 @@ Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 /* VTY struct. */
 struct vty 
 {
-  /* File descripter of this vty. */
-  int fd;
+	/* File descripter of this vty. */
+	int fd;
 
-  /* Is this vty connect to file or not */
-  enum {VTY_TERM, VTY_FILE, VTY_SHELL, VTY_SHELL_SERV} type;
+	/* Is this vty connect to file or not */
+	enum {VTY_TERM, VTY_FILE, VTY_SHELL, VTY_SHELL_SERV} type;
 
-  /* Node status of this vty */
-  int node;
+	/* Node status of this vty */
+	int node;
 
-  /* What address is this vty comming from. */
-  char *address;
+	/* What address is this vty comming from. */
+	char *address;
 
-  /* Privilege level of this vty. */
-  int privilege;
+	/* Privilege level of this vty. */
+	int privilege;
 
-  /* Failure count */
-  int fail;
+	/* Failure count */
+	int fail;
 
-  /* Output buffer. */
-  struct buffer *obuf;
+	/* Output buffer. */
+	struct buffer *obuf;
 
-  /* Command input buffer */
-  char *buf;
+	/* Command input buffer */
+	char *buf;
 
-  /* Command cursor point */
-  int cp;
+	/* Command cursor point */
+	int cp;
 
-  /* Command length */
-  int length;
+	/* Command length */
+	int length;
 
-  /* Command max length. */
-  int max;
+	/* Command max length. */
+	int max;
 
-  /* Histry of command */
-  char *hist[VTY_MAXHIST];
+	/* Histry of command */
+	char *hist[VTY_MAXHIST];
 
-  /* History lookup current point */
-  int hp;
+	/* History lookup current point */
+	int hp;
 
-  /* History insert end point */
-  int hindex;
+	/* History insert end point */
+	int hindex;
 
-  /* For current referencing point of interface, route-map,
-     access-list etc... */
-  void *index;
+	/* For current referencing point of interface, route-map,
+	 access-list etc... */
+	void *index;
 
-  /* For multiple level index treatment such as key chain and key. */
-  void *index_sub;
+	/* For multiple level index treatment such as key chain and key. */
+	void *index_sub;
 
-  /* For escape character. */
-  unsigned char escape;
+	/* For escape character. */
+	unsigned char escape;
 
-  /* Current vty status. */
-  enum {VTY_NORMAL, VTY_CLOSE, VTY_MORE, VTY_MORELINE,
-        VTY_START, VTY_CONTINUE} status;
+	/* Current vty status. */
+	enum {VTY_NORMAL, VTY_CLOSE, VTY_MORE, VTY_MORELINE,
+	    VTY_START, VTY_CONTINUE} status;
 
-  /* IAC handling */
-  unsigned char iac;
+	/* IAC handling */
+	unsigned char iac;
 
-  /* IAC SB handling */
-  unsigned char iac_sb_in_progress;
-  struct buffer *sb_buffer;
+	/* IAC SB handling */
+	unsigned char iac_sb_in_progress;
+	struct buffer *sb_buffer;
 
-  /* Window width/height. */
-  int width;
-  int height;
+	/* Window width/height. */
+	int width;
+	int height;
 
-  int scroll_one;
+	int scroll_one;
 
-  /* Configure lines. */
-  int lines;
+	/* Configure lines. */
+	int lines;
 
-  /* Current executing function pointer. */
-  int (*func) (struct vty *, void *arg);
+	/* Current executing function pointer. */
+	int (*func) (struct vty *, void *arg);
 
-  /* Terminal monitor. */
-  int monitor;
+	/* Terminal monitor. */
+	int monitor;
 
-  /* In configure mode. */
-  int config;
+	/* In configure mode. */
+	int config;
 
-  /* Read and write thread. */
-  struct thread *t_read;
-  struct thread *t_write;
+	/* Read and write thread. */
+	struct thread *t_read;
+	struct thread *t_write;
 
-  /* Timeout seconds and thread. */
-  unsigned long v_timeout;
-  struct thread *t_timeout;
+	/* Timeout seconds and thread. */
+	unsigned long v_timeout;
+	struct thread *t_timeout;
 
-  /* Thread output function. */
-  struct thread *t_output;
+	/* Thread output function. */
+	struct thread *t_output;
 
-  /* Output data pointer. */
-  int (*output_func) (struct vty *, int);
-  void (*output_clean) (struct vty *);
-  void *output_rn;
-  unsigned long output_count;
-  int output_type;
-  void *output_arg;
+	/* Output data pointer. */
+	int (*output_func) (struct vty *, int);
+	void (*output_clean) (struct vty *);
+	void *output_rn;
+	unsigned long output_count;
+	int output_type;
+	void *output_arg;
+
+	char format_buf[40960];
+	char recv_buf[4096];
 };
 
 

@@ -66,60 +66,31 @@ static void vty_event (enum event, int, struct vty *);
 int
 vty_out (struct vty *vty, const char *format, ...)
 {
-  va_list args;
-  int len = 0;
-  int size = 1024;
-  char buf[1024];
-  char *p = NULL;
-  
-  va_start (args, format);
-  if (vty->type == VTY_SHELL)
-    vprintf (format, args);
-  else {
+	if (!vty)
+		return -1;
 
-	      /* Try to write to initial buffer.  */
-	      len = vsnprintf (buf, sizeof buf, format, args);
+	va_list args;
+	int len = 0;
+	int size = sizeof(vty->format_buf);
 
-	      /* Initial buffer is not enough.  */
-	      if (len < 0 || len >= size)
-		{
-		  while (1)
-		    {
-		      if (len > -1)
-			size = len + 1;
-		      else
-			size = size * 2;
+	va_start (args, format);
+	if (vty->type == VTY_SHELL)
+		vprintf (format, args);
+	else {
 
-		      p = realloc (p, size);
-		      if (! p)
+		len = vsnprintf (vty->format_buf, sizeof (vty->format_buf), format, args);
+
+		/* Initial buffer is not enough.  */
+		if (len < 0 || len >= size)
 			return -1;
-
-		      len = vsnprintf (p, size, format, args);
-
-		      if (len > -1 && len < size)
-			break;
-		    }
-		}
-
-	      /* When initial buffer is enough to store all output.  */
-	      if (! p)
-		p = buf;
-
-	      /* Pointer p must point out buffer. */
-		buffer_write (vty->obuf, (u_char *) p, len);
-
-	      /* If p is not different with buf, it is allocated buffer.  */
-	      if (p != buf)
-		free (p);
-	 }
-  va_end (args);
-  return len;
+		/* Pointer p must point out buffer. */
+		buffer_write (vty->obuf, (u_char *) vty->format_buf, len);
+	}
+	va_end (args);
+	return len;
 }
 
 #define TIME_BUF 27
-
-
-
 
 /* Put out prompt and wait input from user. */
 static void
