@@ -338,4 +338,11 @@ void signal_segvdump(void)
 	signal(SIGSEGV, dump_trace);
 	return;
 }
+void signal_action(void)
+{
+	signal(SIGPIPE, SIG_IGN);
+	return;
+
+}
+
 
